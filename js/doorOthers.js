@@ -160,61 +160,59 @@ function Door2(number, onUnlock) {
     DoorBase.apply(this, arguments);
 
     // ==== Напишите свой код для открытия третей двери здесь ====
-    this.popup.addEventListener('click', function () {
-        this.unlock();
-    }.bind(this), false);
-    // var _this = this;
-    // var parts = [
-    //     document.querySelector('.part--1'),
-    //     document.querySelector('.part--2'),
-    //     document.querySelector('.part--3'),
-    //     document.querySelector('.part--4')
-    // ];
-    // var kettle = document.querySelector('.kettle__inner');
-    // parts.forEach(function (part) {
-    //     part.addEventListener('pointerdown', function (e) {
-    //         var startX, startY, posX, posY;
-    //         startX = e.clientX;
-    //         startY = e.clientY;
-    //         posX = parseInt(window.getComputedStyle(e.target, null).getPropertyValue('left'));
-    //         posY = parseInt(window.getComputedStyle(e.target, null).getPropertyValue('top'));
-    //         e.target.classList.add('part--pressed');
-    //         e.target.addEventListener('pointermove', processMovePart, false);
-    //         e.target.addEventListener('pointerup', finishMovePart, false);
-    //
-    //         function processMovePart(e) {
-    //             var position = [startX - e.clientX, startY - e.clientY];
-    //
-    //             e.target.style.left = posX - position[0] + 'px';
-    //             e.target.style.top = posY - position[1] + 'px';
-    //         }
-    //
-    //         function finishMovePart(e) {
-    //             e.target.classList.remove('part--pressed');
-    //             e.target.removeEventListener('pointermove', processMovePart);
-    //             e.target.removeEventListener('pointerup', finishMovePart);
-    //             var elements = document.elementsFromPoint(e.clientX, e.clientY);
-    //             if (elements.indexOf(kettle) !== -1) {
-    //                 e.target.classList.add('part--ready');
-    //             }
-    //             checkCondition();
-    //         }
-    //     }, false);
-    //
-    //
-    //     function checkCondition() {
-    //         var isOpened = true;
-    //
-    //         parts.forEach(function (part) {
-    //             if (!part.classList.contains('part--ready')) {
-    //                 isOpened = false;
-    //             }
-    //         });
-    //         if (isOpened) {
-    //             _this.unlock();
-    //         }
-    //     }
-    // });
+    var _this = this;
+    var parts = [
+        document.querySelector('.part--1'),
+        document.querySelector('.part--2'),
+        document.querySelector('.part--3'),
+        document.querySelector('.part--4')
+    ];
+    var kettle = document.querySelector('.kettle__inner');
+    parts.forEach(function (part) {
+        part.addEventListener('pointerdown', function (e) {
+            var startX, startY, posX, posY;
+            var elem = this;
+            startX = e.clientX;
+            startY = e.clientY;
+            posX = parseInt(window.getComputedStyle(e.target, null).getPropertyValue('left'));
+            posY = parseInt(window.getComputedStyle(e.target, null).getPropertyValue('top'));
+            e.target.classList.add('part--pressed');
+            document.addEventListener('pointermove', processMovePart, false);
+            document.addEventListener('pointerup', finishMovePart, false);
+
+            function processMovePart(e) {
+                var position = [startX - e.clientX, startY - e.clientY];
+
+                elem.style.left = posX - position[0] + 'px';
+                elem.style.top = posY - position[1] + 'px';
+            }
+
+            function finishMovePart(e) {
+                elem.classList.remove('part--pressed');
+                document.removeEventListener('pointermove', processMovePart);
+                document.removeEventListener('pointerup', finishMovePart);
+                var elements = document.elementsFromPoint(e.clientX, e.clientY);
+                if (elements.indexOf(kettle) !== -1) {
+                    elem.classList.add('part--ready');
+                }
+                checkCondition();
+            }
+        }, false);
+
+
+        function checkCondition() {
+            var isOpened = true;
+
+            parts.forEach(function (part) {
+                if (!part.classList.contains('part--ready')) {
+                    isOpened = false;
+                }
+            });
+            if (isOpened) {
+                _this.unlock();
+            }
+        }
+    });
     // ==== END Напишите свой код для открытия третей двери здесь ====
 }
 Door2.prototype = Object.create(DoorBase.prototype);
