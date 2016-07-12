@@ -130,6 +130,7 @@ function Door1(number, onUnlock) {
             draggableBoltPosition = 0;
         }
         draggableBolt.style.right = draggableBoltPosition + 'px';
+        console.log(document.elementFromPoint(e.clientX, e.clientY));
         checkCondition();
         document.removeEventListener('pointermove', processDragBolt);
         document.removeEventListener('pointerup', finishDragBolt);
@@ -138,7 +139,7 @@ function Door1(number, onUnlock) {
     var _this = this;
 
     function checkCondition() {
-        if (clickableBoltPosition >= 0 && draggableBoltPosition >= 0) {
+        if (/*clickableBoltPosition >= 0 && */draggableBoltPosition >= 0) {
             _this.unlock();
             clearInterval(counter);
         }
@@ -159,6 +160,9 @@ function Door2(number, onUnlock) {
     DoorBase.apply(this, arguments);
 
     // ==== Напишите свой код для открытия третей двери здесь ====
+    // this.popup.addEventListener('click', function () {
+    //     this.unlock();
+    // }.bind(this), false);
     var _this = this;
     var parts = [
         document.querySelector('.part--1'),
@@ -170,29 +174,28 @@ function Door2(number, onUnlock) {
     parts.forEach(function (part) {
         part.addEventListener('pointerdown', function (e) {
             var startX, startY, posX, posY;
-            var elem = e.target;
             startX = e.clientX;
             startY = e.clientY;
-            posX = parseInt(window.getComputedStyle(elem, null).getPropertyValue('left'));
-            posY = parseInt(window.getComputedStyle(elem, null).getPropertyValue('top'));
-            elem.classList.add('part--pressed');
-            document.addEventListener('pointermove', processMovePart, false);
-            document.addEventListener('pointerup', finishMovePart, false);
+            posX = parseInt(window.getComputedStyle(e.target, null).getPropertyValue('left'));
+            posY = parseInt(window.getComputedStyle(e.target, null).getPropertyValue('top'));
+            e.target.classList.add('part--pressed');
+            e.target.addEventListener('pointermove', processMovePart, false);
+            e.target.addEventListener('pointerup', finishMovePart, false);
 
             function processMovePart(e) {
                 var position = [startX - e.clientX, startY - e.clientY];
 
-                elem.style.left = posX - position[0] + 'px';
-                elem.style.top = posY - position[1] + 'px';
+                e.target.style.left = posX - position[0] + 'px';
+                e.target.style.top = posY - position[1] + 'px';
             }
 
             function finishMovePart(e) {
-                elem.classList.remove('part--pressed');
-                document.removeEventListener('pointermove', processMovePart);
-                document.removeEventListener('pointerup', finishMovePart);
+                e.target.classList.remove('part--pressed');
+                e.target.removeEventListener('pointermove', processMovePart);
+                e.target.removeEventListener('pointerup', finishMovePart);
                 var elements = document.elementsFromPoint(e.clientX, e.clientY);
                 if (elements.indexOf(kettle) !== -1) {
-                    elem.classList.add('part--ready');
+                    e.target.classList.add('part--ready');
                 }
                 checkCondition();
             }
@@ -257,7 +260,7 @@ function Box(number, onUnlock) {
 
     function startDraw(e) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.moveTo(e.clientX - coords.left, e.clientY - coords.top);
+        ctx.moveTo(e.clientX  - coords.left, e.clientY - coords.top);
         ctx.lineWidth = 10;
         ctx.lineJoin = ctx.lineCap = 'round';
         ctx.strokeStyle = 'rgba(255,255,255,0.5)';
@@ -269,7 +272,7 @@ function Box(number, onUnlock) {
     }
 
     function processDraw(e) {
-        ctx.lineTo(e.clientX - coords.left, e.clientY - coords.top);
+        ctx.lineTo(e.clientX  - coords.left, e.clientY - coords.top);
         ctx.stroke();
     }
 
