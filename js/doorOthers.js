@@ -166,10 +166,13 @@ function Door2(number, onUnlock) {
         document.querySelector('.part--4')
     ];
     var kettle = document.querySelector('.kettle__inner');
+
     parts.forEach(function (part) {
         part.addEventListener('pointerdown', function (e) {
+            e.preventDefault();
             var startX, startY, posX, posY;
             var elem = e.target;
+
             startX = e.clientX;
             startY = e.clientY;
             posX = elem.offsetLeft;
@@ -177,20 +180,22 @@ function Door2(number, onUnlock) {
             elem.classList.add('part--pressed');
             elem.addEventListener('pointermove', processMovePart, false);
             elem.addEventListener('pointerup', finishMovePart, false);
+            elem.addEventListener('pointercancel', finishMovePart, false);
 
             function processMovePart(e) {
                 var position = [startX - e.clientX, startY - e.clientY];
-                elem.setPointerCapture(e.pointerId);
 
+                elem.setPointerCapture(e.pointerId);
                 elem.style.left = posX - position[0] + 'px';
                 elem.style.top = posY - position[1] + 'px';
             }
 
             function finishMovePart(e) {
+                var elements = document.elementsFromPoint(e.clientX, e.clientY);
+
                 elem.classList.remove('part--pressed');
                 elem.removeEventListener('pointermove', processMovePart);
                 elem.removeEventListener('pointerup', finishMovePart);
-                var elements = document.elementsFromPoint(e.clientX, e.clientY);
                 if (elements.indexOf(kettle) !== -1) {
                     elem.classList.add('part--ready');
                 }
@@ -242,6 +247,10 @@ function Box(number, onUnlock) {
         document.querySelector('.star--5')
     ];
 
+    ctx.lineWidth = 10;
+    ctx.lineJoin = ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+
     popup.addEventListener('pointerdown', startDraw, false);
 
     function selectStar(e) {
@@ -249,18 +258,12 @@ function Box(number, onUnlock) {
             e.target.classList.add('star--selected');
             path += e.target.innerText;
         }
-        if (path === '12345') {
-            _this.unlock();
-        }
-        console.log(path);
     }
 
     function startDraw(e) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.moveTo(e.clientX  - coords.left, e.clientY - coords.top);
-        ctx.lineWidth = 10;
-        ctx.lineJoin = ctx.lineCap = 'round';
-        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.beginPath();
         stars.forEach(function (star) {
             star.addEventListener('pointermove', selectStar, false);
         });
@@ -274,6 +277,10 @@ function Box(number, onUnlock) {
     }
 
     function finishDraw(e) {
+        ctx.closePath();
+        if (path === '12345') {
+            _this.unlock();
+        }
         stars.forEach(function (star) {
             star.removeEventListener('pointerover', selectStar);
         });
