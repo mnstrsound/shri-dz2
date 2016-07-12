@@ -130,7 +130,6 @@ function Door1(number, onUnlock) {
             draggableBoltPosition = 0;
         }
         draggableBolt.style.right = draggableBoltPosition + 'px';
-        console.log(document.elementFromPoint(e.clientX, e.clientY));
         checkCondition();
         document.removeEventListener('pointermove', processDragBolt);
         document.removeEventListener('pointerup', finishDragBolt);
@@ -139,7 +138,7 @@ function Door1(number, onUnlock) {
     var _this = this;
 
     function checkCondition() {
-        if (/*clickableBoltPosition >= 0 && */draggableBoltPosition >= 0) {
+        if (clickableBoltPosition >= 0 && draggableBoltPosition >= 0) {
             _this.unlock();
             clearInterval(counter);
         }
@@ -171,12 +170,12 @@ function Door2(number, onUnlock) {
     parts.forEach(function (part) {
         part.addEventListener('pointerdown', function (e) {
             var startX, startY, posX, posY;
-            var elem = this;
+            var elem = e.target;
             startX = e.clientX;
             startY = e.clientY;
-            posX = parseInt(window.getComputedStyle(e.target, null).getPropertyValue('left'));
-            posY = parseInt(window.getComputedStyle(e.target, null).getPropertyValue('top'));
-            e.target.classList.add('part--pressed');
+            posX = parseInt(window.getComputedStyle(elem, null).getPropertyValue('left'));
+            posY = parseInt(window.getComputedStyle(elem, null).getPropertyValue('top'));
+            elem.classList.add('part--pressed');
             document.addEventListener('pointermove', processMovePart, false);
             document.addEventListener('pointerup', finishMovePart, false);
 
@@ -258,7 +257,7 @@ function Box(number, onUnlock) {
 
     function startDraw(e) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.moveTo(e.clientX  - coords.left, e.clientY - coords.top);
+        ctx.moveTo(e.clientX - coords.left, e.clientY - coords.top);
         ctx.lineWidth = 10;
         ctx.lineJoin = ctx.lineCap = 'round';
         ctx.strokeStyle = 'rgba(255,255,255,0.5)';
@@ -270,7 +269,7 @@ function Box(number, onUnlock) {
     }
 
     function processDraw(e) {
-        ctx.lineTo(e.clientX  - coords.left, e.clientY - coords.top);
+        ctx.lineTo(e.clientX - coords.left, e.clientY - coords.top);
         ctx.stroke();
     }
 
