@@ -175,11 +175,12 @@ function Door2(number, onUnlock) {
             posX = parseInt(window.getComputedStyle(elem, null).getPropertyValue('left'));
             posY = parseInt(window.getComputedStyle(elem, null).getPropertyValue('top'));
             elem.classList.add('part--pressed');
-            document.addEventListener('pointermove', processMovePart, false);
-            document.addEventListener('pointerup', finishMovePart, false);
+            elem.addEventListener('pointermove', processMovePart, false);
+            elem.addEventListener('pointerup', finishMovePart, false);
 
             function processMovePart(e) {
                 var position = [startX - e.clientX, startY - e.clientY];
+                elem.setPointerCapture(e.pointerId);
 
                 elem.style.left = posX - position[0] + 'px';
                 elem.style.top = posY - position[1] + 'px';
@@ -187,8 +188,8 @@ function Door2(number, onUnlock) {
 
             function finishMovePart(e) {
                 elem.classList.remove('part--pressed');
-                document.removeEventListener('pointermove', processMovePart);
-                document.removeEventListener('pointerup', finishMovePart);
+                elem.removeEventListener('pointermove', processMovePart);
+                elem.removeEventListener('pointerup', finishMovePart);
                 var elements = document.elementsFromPoint(e.clientX, e.clientY);
                 if (elements.indexOf(kettle) !== -1) {
                     elem.classList.add('part--ready');
