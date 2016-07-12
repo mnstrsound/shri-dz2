@@ -237,8 +237,12 @@ function Box(number, onUnlock) {
     var popup = this.popup;
     var path = '';
     var canvas = document.getElementById('canvas');
+    var popupContent = this.popup.querySelector('.popup__content');
+    canvas.width = popupContent.offsetWidth;
+    canvas.height = popupContent.offsetHeight;
     var ctx = canvas.getContext('2d');
     var coords = canvas.getBoundingClientRect();
+    console.log(coords);
     var stars = [
         document.querySelector('.star--1'),
         document.querySelector('.star--2'),
@@ -246,7 +250,6 @@ function Box(number, onUnlock) {
         document.querySelector('.star--4'),
         document.querySelector('.star--5')
     ];
-
     ctx.lineWidth = 10;
     ctx.lineJoin = ctx.lineCap = 'round';
     ctx.strokeStyle = 'rgba(255,255,255,0.5)';
