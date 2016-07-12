@@ -67,6 +67,7 @@ function Door1(number, onUnlock) {
 
     // ==== Напишите свой код для открытия второй двери здесь ====
     // Для примера дверь откроется просто по клику на неё
+    var _this = this;
     var clickableBoltPosition = -160;
     var draggableBoltPosition = -160;
     var clickableBolt = this.popup.querySelector('.bolt--clickable');
@@ -76,9 +77,9 @@ function Door1(number, onUnlock) {
     var counter;
     var startX;
 
-    clickableButton.addEventListener('pointerdown', moveBoltForward.bind(this));
+    clickableButton.addEventListener('pointerdown', moveBoltForward);
     clickableButton.addEventListener('pointerup', removePressed);
-    draggableButton.addEventListener('pointerdown', startDragBolt.bind(this));
+    draggableButton.addEventListener('pointerdown', startDragBolt);
 
     function moveBoltForward(e) {
         e.preventDefault();
@@ -103,7 +104,7 @@ function Door1(number, onUnlock) {
                 }
             }, 20)
         }
-        checkCondition.apply(this);
+        checkCondition();
     }
 
     function removePressed(e) {
@@ -130,13 +131,10 @@ function Door1(number, onUnlock) {
             draggableBoltPosition = 0;
         }
         draggableBolt.style.right = draggableBoltPosition + 'px';
-        console.log(document.elementFromPoint(e.clientX, e.clientY));
         checkCondition();
         document.removeEventListener('pointermove', processDragBolt);
         document.removeEventListener('pointerup', finishDragBolt);
     }
-
-    var _this = this;
 
     function checkCondition() {
         if (/*clickableBoltPosition >= 0 && */draggableBoltPosition >= 0) {
@@ -160,9 +158,6 @@ function Door2(number, onUnlock) {
     DoorBase.apply(this, arguments);
 
     // ==== Напишите свой код для открытия третей двери здесь ====
-    // this.popup.addEventListener('click', function () {
-    //     this.unlock();
-    // }.bind(this), false);
     var _this = this;
     var parts = [
         document.querySelector('.part--1'),
@@ -174,28 +169,29 @@ function Door2(number, onUnlock) {
     parts.forEach(function (part) {
         part.addEventListener('pointerdown', function (e) {
             var startX, startY, posX, posY;
+            var elem = e.target;
             startX = e.clientX;
             startY = e.clientY;
-            posX = parseInt(window.getComputedStyle(e.target, null).getPropertyValue('left'));
-            posY = parseInt(window.getComputedStyle(e.target, null).getPropertyValue('top'));
-            e.target.classList.add('part--pressed');
-            e.target.addEventListener('pointermove', processMovePart, false);
-            e.target.addEventListener('pointerup', finishMovePart, false);
+            posX = parseInt(window.getComputedStyle(elem, null).getPropertyValue('left'));
+            posY = parseInt(window.getComputedStyle(elem, null).getPropertyValue('top'));
+            elem.classList.add('part--pressed');
+            document.addEventListener('pointermove', processMovePart, false);
+            document.addEventListener('pointerup', finishMovePart, false);
 
             function processMovePart(e) {
                 var position = [startX - e.clientX, startY - e.clientY];
 
-                e.target.style.left = posX - position[0] + 'px';
-                e.target.style.top = posY - position[1] + 'px';
+                elem.style.left = posX - position[0] + 'px';
+                elem.style.top = posY - position[1] + 'px';
             }
 
             function finishMovePart(e) {
-                e.target.classList.remove('part--pressed');
-                e.target.removeEventListener('pointermove', processMovePart);
-                e.target.removeEventListener('pointerup', finishMovePart);
+                elem.classList.remove('part--pressed');
+                document.removeEventListener('pointermove', processMovePart);
+                document.removeEventListener('pointerup', finishMovePart);
                 var elements = document.elementsFromPoint(e.clientX, e.clientY);
                 if (elements.indexOf(kettle) !== -1) {
-                    e.target.classList.add('part--ready');
+                    elem.classList.add('part--ready');
                 }
                 checkCondition();
             }
