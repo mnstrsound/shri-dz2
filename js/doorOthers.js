@@ -179,7 +179,7 @@ function Door2(number, onUnlock) {
             elem.addEventListener('pointerup', finishMovePart, false);
 
             function processMovePart(e) {
-                var position = [startX - e.clientX, startY - e.clientY];
+                var position = [startX + (startX - e.clientX), startY + (startY - e.clientY)];
                 elem.setPointerCapture(e.pointerId);
 
                 elem.style.left = position[0] + 'px';
