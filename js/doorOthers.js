@@ -182,8 +182,8 @@ function Door2(number, onUnlock) {
                 var position = [startX - e.clientX, startY - e.clientY];
                 elem.setPointerCapture(e.pointerId);
 
-                elem.style.left = posX - position[0] + 'px';
-                elem.style.top = posY - position[1] + 'px';
+                elem.style.left = position[0] + 'px';
+                elem.style.top = position[1] + 'px';
             }
 
             function finishMovePart(e) {
