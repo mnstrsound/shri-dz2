@@ -172,8 +172,8 @@ function Door2(number, onUnlock) {
             var elem = e.target;
             startX = e.clientX;
             startY = e.clientY;
-            posX = parseInt(window.getComputedStyle(elem, null).getPropertyValue('left'));
-            posY = parseInt(window.getComputedStyle(elem, null).getPropertyValue('top'));
+            posX = elem.offsetLeft;
+            posY = elem.offsetTop;
             elem.classList.add('part--pressed');
             elem.addEventListener('pointermove', processMovePart, false);
             elem.addEventListener('pointerup', finishMovePart, false);
