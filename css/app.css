@@ -1,0 +1,368 @@
+html, body {
+    min-height: 100%;
+}
+
+body {
+    background-color: #ACC0C1;
+}
+
+.container {
+    position: relative;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+@media (min-width: 450px) {
+    .container {
+        box-shadow: 1px 1px 20px #666;
+    }
+}
+
+.level {
+    position: relative;
+    min-width: 320px;
+    background-size: cover;
+    background-position: left top;
+    background-repeat: no-repeat;
+}
+
+.level_0 {
+    background-image: url(../img/level_0_bg.jpg);
+    height: 180px;
+    position: relative;
+}
+
+.level_0:after {
+    content: ' ';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url(../img/logo.png) no-repeat center 25px;
+    background-size: contain;
+    pointer-events: none;
+}
+
+.level_1 {
+    background-image: url(../img/level_1_bg.png);
+    height: 235px;
+}
+
+.level_2 {
+    background-image: url(../img/level_2_bg.png);
+    height: 235px;
+}
+
+.level_3 {
+    background-image: url(../img/level_3_bg.png);
+    height: 235px;
+}
+
+.level_4 {
+    background-image: url(../img/level_4_bg.png);
+    height: 75px;
+}
+
+.door {
+    position: absolute;
+    bottom: 0;
+    background: url(../img/door.png) no-repeat top left;
+    width: 64px;
+    height: 100px;
+
+    cursor: pointer;
+}
+
+.door_locked {
+    background: url(../img/door_locked.png) no-repeat top left;
+}
+
+.door_disabled {
+    opacity: .7;
+}
+
+.door_level_0 {
+    right: 2%;
+}
+
+.door_level_1 {
+    left: 2%;
+}
+
+.door_level_2 {
+    right: 2%;
+}
+
+.box {
+    position: absolute;
+    left: 10%;
+    bottom: 0;
+
+    background: url('../img/box.png') no-repeat top left;
+    width: 32px;
+    height: 32px;
+
+    cursor: pointer;
+}
+
+.popup {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+
+    background-color: rgba(0, 0, 0, .3);
+    transition: opacity .3s;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup_hidden {
+    pointer-events: none;
+    opacity: 0;
+}
+
+.popup__content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 400px;
+
+    background: #000 url(../img/door_level_0.jpg) no-repeat center;
+    background-size: cover;
+}
+
+.popup__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 24px;
+    color: #fff;
+
+    cursor: pointer;
+}
+
+.popup__content_level_0 {
+    /* Можно поставить какую-нибудь свою картинку двери на бек */
+}
+
+.popup__content_level_1 {
+    /* Можно поставить какую-нибудь свою картинку двери на бек */
+}
+
+.popup__content_level_2 {
+    /* Можно поставить какую-нибудь свою картинку двери на бек */
+}
+
+.popup__content_level_3 {
+    background-image: url(../img/door__box.png);
+    background-size: contain;
+}
+
+.door-riddle {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 100%;
+}
+
+.door-riddle__button {
+    width: 64px;
+    height: 64px;
+    border-radius: 64px;
+    background-color: #583319;
+    border: 1px solid #F3E9E0;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, .4);
+
+    transition: background-color .3s;
+}
+
+.door-riddle__button_pressed {
+    background-color: #F3E5D9;
+}
+
+.bolt {
+    border-radius: 25px;
+    height: 50px;
+    width: 220px;
+    position: absolute;
+    right: -160px;
+    background: #6f1400;
+}
+
+.bolt--clickable {
+    top: 30%;
+}
+
+.bolt--draggable {
+    bottom: 30%;
+}
+
+.bolt__button {
+    width: 38px;
+    height: 38px;
+    left: 5px;
+    top: 5px;
+    position: absolute;
+    border-radius: 40px;
+    background-color: #583319;
+    border: 1px solid #F3E9E0;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, .4);
+    transition: background-color .3s;
+    background-position: center;
+}
+
+.bolt__button--clickable {
+    background-image: url('../img/hammer.png');
+    background-size: 38px 38px;
+}
+
+.bolt__button--draggable {
+    background-image: url('../img/hand.png');
+    background-size: 35px 35px;
+}
+
+.bolt__button--pressed {
+    background-color: #F3E5D9;
+}
+
+.kettle {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 150px;
+    height: 150px;
+    background: url('../img/kettle.png') center no-repeat;
+    background-size: 150px 150px;
+}
+
+.kettle__inner {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, .8);
+    border: 1px solid #F3E9E0;
+
+}
+
+.part {
+    z-index: 2;
+    border-radius: 50%;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: #583319;
+    border: 1px solid #F3E9E0;
+}
+
+.part--pressed {
+    z-index: 5;
+    background-color: #F3E5D9;
+}
+
+.part--1 {
+    top: 20px;
+    left: 20px;
+}
+
+.part--2 {
+    top: 20px;
+    right: 20px;
+}
+
+.part--3 {
+    bottom: 20px;
+    right: 20px;
+}
+
+.part--4 {
+    bottom: 20px;
+    left: 20px;
+}
+
+.stars {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 256px;
+    height: 256px;
+}
+
+.canvas {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.star {
+    z-index: 2;
+    position: absolute;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(88, 51, 25, .5);
+    border: 1px solid #F3E9E0;
+    color: #fff;
+    text-align: center;
+    line-height: 50px;
+}
+
+.star:before {
+    width: 1px;
+    height: 1px;
+    background: #000;
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.star--1 {
+    left: 24px;
+    bottom: -19px;
+}
+
+.star--2 {
+    left: 103px;
+    top: -19px;
+}
+
+.star--3 {
+    right: 24px;
+    bottom: -19px;
+}
+
+.star--4 {
+    top: 73px;
+    left: -24px;
+}
+
+.star--5 {
+    top: 73px;
+    right: -24px;
+}
