@@ -5,7 +5,7 @@
     <title>Dungeon of Doom</title>
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/app.css">
-    <meta name="viewport" content="width=320px, initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=320, initial-scale=1, user-scalable=no">
 </head>
 
 <body>
@@ -30,6 +30,10 @@
         <div class="popup popup_hidden popup_level_1">
             <div class="popup__content popup__content_level_1" touch-action="none">
                 <div class="popup__close">╳</div>
+                <div class="dialogs">
+                    <div class="dialog dialog--current"><b>Гермиона:</b> Гарри, на двери висят 2 засова. Один выглядит незаржавевшим. Он сдвинется руками. Другой сдвинуть будет тяжело, он еще с возвратным механизмом. Тебе надо будет постараться, чтобы его сбить.</div>
+                    <div class="dialog dialog"><b>Гермиона:</b> Ты такой сильный, Гарри! Пожалуй, я брошу Рона ради тебя.</div>
+                </div>
                 <div class="bolt bolt--clickable">
                     <div class="bolt__button bolt__button--clickable"></div>
                 </div>
@@ -41,10 +45,18 @@
         <div class="popup popup_hidden popup_level_2">
             <div class="popup__content popup__content_level_2" touch-action="none">
                 <div class="popup__close">╳</div>
-                <div class="part part--1"></div>
-                <div class="part part--2"></div>
-                <div class="part part--3"></div>
-                <div class="part part--4"></div>
+                <div class="dialogs">
+                    <div class="dialog dialog--current"><b>Гермиона: </b>Гарри, эта дверь пропустит только слизеринца. Тебе надо сварить оборотное зелье. Брось все ингредиенты в котел.</div>
+                    <div class="dialog"><b>Гермиона: </b>Отлично, Гарри! Уроки зельеваренья не прошли для тебя даром! Ты превратился в Драко Малфоя!</div>
+                </div>
+                <div class="parts">
+                    <div class="part part--1"></div>
+                    <div class="part part--2"></div>
+                    <div class="part part--3"></div>
+                    <div class="part part--4"></div>
+                    <div class="part part--5"></div>
+                    <div class="part part--6"></div>
+                </div>
                 <div class="kettle">
                     <div class="kettle__inner"></div>
                 </div>
@@ -53,6 +65,12 @@
         <div class="popup popup_hidden popup_level_3">
             <div class="popup__content popup__content_level_3" touch-action="none">
                 <div class="popup__close">╳</div>
+                <div class="dialogs">
+                    <div class="dialog dialog--current"><b>Гермиона: </b>Гарри, этот сундук охраняет дементор! Быстрее вызови патронуса! Тебе надо сделать взмах палкой и выкрикнуть Експекто Патронум! </div>
+                    <div class="dialog"><b>Гермиона: </b>Отлично, Гарри! Мы нашли крестраж! Воткни со всей силы в дневник клык василиска!</div>
+                    <div class="dialog"><b>Гермиона: </b>Втыкай, Гарри!</div>
+                    <div class="dialog"><b>Гермиона: </b>Ура, Гарри! Мы победили!</div>
+                </div>
                 <div class="stars">
                     <div class="star star--1">1</div>
                     <div class="star star--2">2</div>
@@ -61,6 +79,10 @@
                     <div class="star star--5">5</div>
                 </div>
                 <canvas id="canvas" class="canvas" width="300" height="300"></canvas>
+                <div class="dementor"></div>
+                <div class="diary"></div>
+                <div class="teeth"></div>
+                <div class="indicator"></div>
             </div>
         </div>
     </div>

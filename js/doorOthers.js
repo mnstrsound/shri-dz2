@@ -21,10 +21,7 @@ function Door0(number, onUnlock) {
         b.addEventListener('pointerleave', _onButtonPointerUp.bind(this));
     }.bind(this));
 
-    var _this = this;
-
     function _onButtonPointerDown(e) {
-        _this.unlock();
         e.target.classList.add('door-riddle__button_pressed');
         checkCondition.apply(this);
     }
@@ -74,6 +71,7 @@ function Door1(number, onUnlock) {
     var draggableBolt = this.popup.querySelector('.bolt--draggable');
     var clickableButton = this.popup.querySelector('.bolt__button--clickable');
     var draggableButton = this.popup.querySelector('.bolt__button--draggable');
+    var dialogs = _this.popup.querySelector('.dialogs');
     var counter;
     var startX;
 
@@ -90,11 +88,12 @@ function Door1(number, onUnlock) {
             clickableBoltPosition = 0;
             clickableBolt.style.right = clickableBoltPosition + 'px';
             clearInterval(counter);
+            checkCondition();
             return;
         }
         if (!counter) {
             counter = setInterval(function () {
-                if (clickableBoltPosition > -160) {
+                if (clickableBoltPosition > -160 && clickableBoltPosition < 0) {
                     clickableBoltPosition--;
                     clickableBolt.style.right = clickableBoltPosition + 'px';
                 }
@@ -112,34 +111,34 @@ function Door1(number, onUnlock) {
     }
 
     function startDragBolt(e) {
+        if (draggableBoltPosition >= 0) return;
         startX = e.clientX;
-        document.addEventListener('pointermove', processDragBolt, false);
-        document.addEventListener('pointerup', finishDragBolt, false);
+        e.target.setPointerCapture(e.pointerId);
+        e.target.addEventListener('pointermove', processDragBolt, false);
+        e.target.addEventListener('pointerup', finishDragBolt, false);
     }
 
     function processDragBolt(e) {
         var position = draggableBoltPosition + startX - e.clientX;
-        if (position > 0) {
-            position = 0;
-        }
+        if (position > 0) position = 0;
         draggableBolt.style.right = position + 'px';
     }
 
     function finishDragBolt(e) {
         draggableBoltPosition = draggableBoltPosition + startX - e.clientX;
-        if (draggableBoltPosition > 0) {
-            draggableBoltPosition = 0;
-        }
+        if (draggableBoltPosition > 0) draggableBoltPosition = 0;
         draggableBolt.style.right = draggableBoltPosition + 'px';
         checkCondition();
-        document.removeEventListener('pointermove', processDragBolt);
-        document.removeEventListener('pointerup', finishDragBolt);
+        e.target.removeEventListener('pointermove', processDragBolt);
+        e.target.removeEventListener('pointerup', finishDragBolt);
     }
 
     function checkCondition() {
-        if (/*clickableBoltPosition >= 0 && */draggableBoltPosition >= 0) {
-            _this.unlock();
-            clearInterval(counter);
+        if (clickableBoltPosition >= 0 && draggableBoltPosition >= 0) {
+            showDialog(dialogs, 1);
+            setTimeout(function () {
+                _this.unlock();
+            }, 2000)
         }
     }
 
@@ -159,17 +158,21 @@ function Door2(number, onUnlock) {
 
     // ==== Напишите свой код для открытия третей двери здесь ====
     var _this = this;
+    var dialogs = _this.popup.querySelector('.dialogs');
     var parts = [
         document.querySelector('.part--1'),
         document.querySelector('.part--2'),
         document.querySelector('.part--3'),
-        document.querySelector('.part--4')
+        document.querySelector('.part--4'),
+        document.querySelector('.part--5'),
+        document.querySelector('.part--6')
     ];
     var kettle = document.querySelector('.kettle__inner');
 
     parts.forEach(function (part) {
         part.addEventListener('pointerdown', function (e) {
             e.preventDefault();
+            //if (e.target.classList.contains('part--ready')) return;
             var startX, startY, posX, posY;
             var elem = e.target;
 
@@ -198,6 +201,11 @@ function Door2(number, onUnlock) {
                 elem.removeEventListener('pointerup', finishMovePart);
                 if (elements.indexOf(kettle) !== -1) {
                     elem.classList.add('part--ready');
+                    kettle.style.backgroundColor = 'rgba(' +
+                        (Math.floor(Math.random() * 256)) +
+                        ',' + (Math.floor(Math.random() * 256)) +
+                        ',' + (Math.floor(Math.random() * 256)) +
+                        ', 0.8)';
                 }
                 checkCondition();
             }
@@ -213,7 +221,10 @@ function Door2(number, onUnlock) {
                 }
             });
             if (isOpened) {
-                _this.unlock();
+                showDialog(dialogs, 1);
+                setTimeout(function () {
+                    _this.unlock();
+                }, 2000);
             }
         }
     });
@@ -238,11 +249,12 @@ function Box(number, onUnlock) {
     var path = '';
     var canvas = document.getElementById('canvas');
     var popupContent = this.popup.querySelector('.popup__content');
-    canvas.width = popupContent.offsetWidth;
-    canvas.height = popupContent.offsetHeight;
     var ctx = canvas.getContext('2d');
-    var coords = canvas.getBoundingClientRect();
-    console.log(coords);
+    var dialogs = _this.popup.querySelector('.dialogs');
+    var dementor = _this.popup.querySelector('.dementor');
+    var diary = _this.popup.querySelector('.diary');
+    var teeth = _this.popup.querySelector('.teeth');
+    var indicator = _this.popup.querySelector('.indicator');
     var stars = [
         document.querySelector('.star--1'),
         document.querySelector('.star--2'),
@@ -250,11 +262,29 @@ function Box(number, onUnlock) {
         document.querySelector('.star--4'),
         document.querySelector('.star--5')
     ];
-    ctx.lineWidth = 10;
-    ctx.lineJoin = ctx.lineCap = 'round';
-    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    setCanvasParams();
+    var coords = canvas.getBoundingClientRect();
 
+    window.addEventListener('resize', setCanvasParams, false);
     popup.addEventListener('pointerdown', startDraw, false);
+
+    function setCanvasParams() {
+        canvas.width = popupContent.offsetWidth;
+        canvas.height = popupContent.offsetHeight;
+        /*
+        * На Android слетают настройки ctx при ресайзе окна
+        * */
+        ctx.lineWidth = 10;
+        ctx.lineJoin = ctx.lineCap = 'round';
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    }
+
+    function clear() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        stars.forEach(function (star) {
+            star.classList.remove('star--selected');
+        });
+    }
 
     function selectStar(e) {
         if (!e.target.classList.contains('star--selected')) {
@@ -264,8 +294,9 @@ function Box(number, onUnlock) {
     }
 
     function startDraw(e) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.moveTo(e.clientX  - coords.left, e.clientY - coords.top);
+        e.preventDefault();
+        clear();
+        ctx.moveTo(e.clientX - coords.left, e.clientY - coords.top);
         ctx.beginPath();
         stars.forEach(function (star) {
             star.addEventListener('pointermove', selectStar, false);
@@ -275,14 +306,30 @@ function Box(number, onUnlock) {
     }
 
     function processDraw(e) {
-        ctx.lineTo(e.clientX  - coords.left, e.clientY - coords.top);
+        e.preventDefault();
+        ctx.lineTo(e.clientX - coords.left, e.clientY - coords.top);
         ctx.stroke();
     }
 
     function finishDraw(e) {
+        e.preventDefault();
         ctx.closePath();
         if (path === '12345') {
-            _this.unlock();
+            showDialog(dialogs, 1);
+            popup.removeEventListener('pointerdown', startDraw);
+            dementor.style.display = 'none';
+            canvas.style.display = 'none';
+            stars.forEach(function (star) {
+               star.style.display = 'none';
+            });
+            clear();
+            teeth.style.display = 'block';
+            diary.style.display = 'block';
+            indicator.style.display = 'block';
+            teeth.addEventListener('pointerdown', increaseIndicator, false);
+            teeth.addEventListener('pointerup', throwTeeth, false);
+        } else {
+            path = '';
         }
         stars.forEach(function (star) {
             star.removeEventListener('pointerover', selectStar);
@@ -291,11 +338,46 @@ function Box(number, onUnlock) {
         document.removeEventListener('pointerup', finishDraw, false);
     }
 
+    function increaseIndicator(e) {
+        var height = 0;
+        var interval = setInterval(function () {
+            if (height > 150) {
+                indicator.classList.add('indicator--ready');
+                clearInterval(interval);
+                showDialog(dialogs, 2);
+                return;
+            }
+            height++;
+            indicator.style.height = height + 'px';
+        }, 20);
+    }
+
+    function throwTeeth() {
+        if (indicator.offsetHeight > 100) {
+            showDialog(dialogs, 3);
+            setTimeout(function () {
+                _this.unlock();
+            }, 2000);
+        }
+    }
+
     // ==== END Напишите свой код для открытия сундука здесь ====
 
     this.showCongratulations = function () {
         alert('Поздравляю! Игра пройдена!');
     };
 }
+
+function showDialog(dialogs, id) {
+    var dialogsArr = dialogs.querySelectorAll('.dialog');
+    for (var i = 0, len = dialogsArr.length; i < len; i++) {
+        if (dialogsArr[i].classList.contains('dialog--current')) {
+            dialogsArr[i].classList.remove('dialog--current');
+            break;
+        }
+    }
+    dialogsArr[id].classList.add('dialog--current');
+}
+
 Box.prototype = Object.create(DoorBase.prototype);
 Box.prototype.constructor = DoorBase;

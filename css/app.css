@@ -143,6 +143,7 @@ body {
     right: 16px;
     font-size: 24px;
     color: #fff;
+    z-index: 99;
 
     cursor: pointer;
 }
@@ -184,6 +185,31 @@ body {
 
 .door-riddle__button_pressed {
     background-color: #F3E5D9;
+}
+
+
+.dialogs {
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    top: 50px;
+}
+
+.dialog {
+    display: none;
+
+}
+
+.dialog b {
+    font-weight: bold;
+}
+
+.dialog--current {
+    text-align: center;
+    display: block;
+    color: #fff;
+    font-size: 13px;
+    text-shadow: 1px 1px 1px rgba(0,0,0,.7);
 }
 
 .bolt {
@@ -260,14 +286,29 @@ body {
 
 }
 
+.parts {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    border-radius: 50%;
+}
+
 .part {
     z-index: 2;
     border-radius: 50%;
     position: absolute;
     width: 50px;
     height: 50px;
-    background-color: #583319;
     border: 1px solid #F3E9E0;
+    background-color: #583319;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 45px 45px;
 }
 
 .part--pressed {
@@ -275,27 +316,48 @@ body {
     background-color: #F3E5D9;
 }
 
+.part--ready {
+    display: none;
+}
+
 .part--1 {
-    top: 20px;
-    left: 20px;
+    background-image: url('../img/leaf1.png');
+    top: 0px;
+    left: calc(50% - 26px);
 }
 
 .part--2 {
-    top: 20px;
-    right: 20px;
+    background-image: url('../img/leaf2.png');
+    top: 65px;
+    left: 15px;
 }
 
 .part--3 {
-    bottom: 20px;
-    right: 20px;
+    background-image: url('../img/leaf3.png');
+    top: 65px;
+    right: 15px;
 }
 
 .part--4 {
-    bottom: 20px;
-    left: 20px;
+    background-image: url('../img/leaf4.png');
+    left: 15px;
+    bottom: 65px;
+}
+
+.part--5 {
+    background-image: url('../img/leaf5.png');
+    bottom: 65px;
+    right: 15px;
+}
+
+.part--6 {
+    background-image: url('../img/leaf6.png');
+    bottom: 0;
+    left: calc(50% - 26px);
 }
 
 .stars {
+    z-index: 3;
     position: absolute;
     left: 0;
     right: 0;
@@ -306,18 +368,8 @@ body {
     height: 256px;
 }
 
-.canvas {
-    position: absolute;
-    z-index: 1;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-}
-
 .star {
-    z-index: 2;
+    box-sizing: border-box;
     position: absolute;
     border-radius: 50%;
     width: 50px;
@@ -340,6 +392,10 @@ body {
     right: 0;
     bottom: 0;
     margin: auto;
+}
+
+.star--selected {
+    border: 3px solid #fff;
 }
 
 .star--1 {
@@ -365,4 +421,94 @@ body {
 .star--5 {
     top: 73px;
     right: -24px;
+}
+
+.canvas {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.dementor {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    z-index: 1;
+    position: absolute;
+    width: 300px;
+    height: 256px;
+    background: url('../img/dementor.png') center no-repeat;
+    animation-name: move;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+.diary {
+    z-index: 2;
+    position: absolute;
+    display: none;
+    width: 256px;
+    height: 256px;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    background: url('../img/diary.png') center no-repeat;
+}
+
+.teeth {
+    position: absolute;
+    z-index: 3;
+    display: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid #F3E9E0;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    background: rgba(88, 51, 25, .5) url('../img/teeth.png') center no-repeat;
+    background-size: 45px 45px;
+}
+
+.indicator {
+    position: absolute;
+    display: none;
+    left: 20px;
+    bottom: 40px;
+    width: 10px;
+    height: 0;
+    background: green;
+}
+
+.indicator--ready {
+    background: #f00;
+}
+
+@keyframes move {
+    0%   {
+        transform: translateX(0) translateY(0);
+    }
+    25%  {
+        transform: translateX(-50px) translateY(50px);
+    }
+    50%  {
+        transform: translateX(0) translateY(100px);
+    }
+    75%  {
+        transform: translateX(50px) translateY(50px);
+    }
+    100% {
+        transform: translateX(0) translateY(0);
+    }
 }
