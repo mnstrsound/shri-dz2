@@ -65,8 +65,8 @@ function Door1(number, onUnlock) {
     // ==== Напишите свой код для открытия второй двери здесь ====
     // Для примера дверь откроется просто по клику на неё
     var _this = this;
-    var clickableBoltPosition = -160;
-    var draggableBoltPosition = -160;
+    var clickableBoltPosition = -150;
+    var draggableBoltPosition = -150;
     var clickableBolt = this.popup.querySelector('.bolt--clickable');
     var draggableBolt = this.popup.querySelector('.bolt--draggable');
     var clickableButton = this.popup.querySelector('.bolt__button--clickable');
@@ -81,7 +81,7 @@ function Door1(number, onUnlock) {
 
     function moveBoltForward(e) {
         e.preventDefault();
-        e.target.classList.add('door-riddle__button_pressed');
+        e.target.classList.add('bolt__button--pressed');
         clickableBoltPosition += 30;
         clickableBolt.style.right = clickableBoltPosition + 'px';
         if (clickableBoltPosition >= 0) {
@@ -93,7 +93,7 @@ function Door1(number, onUnlock) {
         }
         if (!counter) {
             counter = setInterval(function () {
-                if (clickableBoltPosition > -160 && clickableBoltPosition < 0) {
+                if (clickableBoltPosition > -150 && clickableBoltPosition < 0) {
                     clickableBoltPosition--;
                     clickableBolt.style.right = clickableBoltPosition + 'px';
                 }
@@ -107,30 +107,36 @@ function Door1(number, onUnlock) {
     }
 
     function removePressed(e) {
-        e.target.classList.remove('door-riddle__button_pressed');
+        e.target.classList.remove('bolt__button--pressed');
     }
 
     function startDragBolt(e) {
         if (draggableBoltPosition >= 0) return;
+        e.target.classList.add('bolt__button--pressed');
         startX = e.clientX;
         e.target.setPointerCapture(e.pointerId);
         e.target.addEventListener('pointermove', processDragBolt, false);
         e.target.addEventListener('pointerup', finishDragBolt, false);
+        e.target.addEventListener('pointercancel', finishDragBolt, false);
     }
 
     function processDragBolt(e) {
         var position = draggableBoltPosition + startX - e.clientX;
         if (position > 0) position = 0;
+        if (position < -150) position = -150;
         draggableBolt.style.right = position + 'px';
     }
 
     function finishDragBolt(e) {
+        e.target.classList.remove('bolt__button--pressed');
         draggableBoltPosition = draggableBoltPosition + startX - e.clientX;
         if (draggableBoltPosition > 0) draggableBoltPosition = 0;
+        if (draggableBoltPosition < -150) draggableBoltPosition = -150;
         draggableBolt.style.right = draggableBoltPosition + 'px';
         checkCondition();
         e.target.removeEventListener('pointermove', processDragBolt);
         e.target.removeEventListener('pointerup', finishDragBolt);
+        e.target.removeEventListener('pointercancel', finishDragBolt);
     }
 
     function checkCondition() {
@@ -172,7 +178,6 @@ function Door2(number, onUnlock) {
     parts.forEach(function (part) {
         part.addEventListener('pointerdown', function (e) {
             e.preventDefault();
-            //if (e.target.classList.contains('part--ready')) return;
             var startX, startY, posX, posY;
             var elem = e.target;
 
@@ -187,7 +192,6 @@ function Door2(number, onUnlock) {
 
             function processMovePart(e) {
                 var position = [startX - e.clientX, startY - e.clientY];
-
                 elem.setPointerCapture(e.pointerId);
                 elem.style.left = posX - position[0] + 'px';
                 elem.style.top = posY - position[1] + 'px';
@@ -195,10 +199,10 @@ function Door2(number, onUnlock) {
 
             function finishMovePart(e) {
                 var elements = document.elementsFromPoint(e.clientX, e.clientY);
-
                 elem.classList.remove('part--pressed');
                 elem.removeEventListener('pointermove', processMovePart);
                 elem.removeEventListener('pointerup', finishMovePart);
+                elem.removeEventListener('pointercancel', finishMovePart);
                 if (elements.indexOf(kettle) !== -1) {
                     elem.classList.add('part--ready');
                     kettle.style.backgroundColor = 'rgba(' +
@@ -255,6 +259,7 @@ function Box(number, onUnlock) {
     var diary = _this.popup.querySelector('.diary');
     var teeth = _this.popup.querySelector('.teeth');
     var indicator = _this.popup.querySelector('.indicator');
+    var interval;
     var stars = [
         document.querySelector('.star--1'),
         document.querySelector('.star--2'),
@@ -272,8 +277,8 @@ function Box(number, onUnlock) {
         canvas.width = popupContent.offsetWidth;
         canvas.height = popupContent.offsetHeight;
         /*
-        * На Android слетают настройки ctx при ресайзе окна
-        * */
+         * На Android слетают настройки ctx при ресайзе окна
+         * */
         ctx.lineWidth = 10;
         ctx.lineJoin = ctx.lineCap = 'round';
         ctx.strokeStyle = 'rgba(255,255,255,0.5)';
@@ -303,6 +308,7 @@ function Box(number, onUnlock) {
         });
         document.addEventListener('pointermove', processDraw, false);
         document.addEventListener('pointerup', finishDraw, false);
+        document.addEventListener('pointercancel', finishDraw, false);
     }
 
     function processDraw(e) {
@@ -311,23 +317,33 @@ function Box(number, onUnlock) {
         ctx.stroke();
     }
 
+    function hidePatronus() {
+        popup.removeEventListener('pointerdown', startDraw);
+        dementor.style.display = 'none';
+        canvas.style.display = 'none';
+        stars.forEach(function (star) {
+            star.style.display = 'none';
+        });
+        clear();
+    }
+
+    function showDiary() {
+        teeth.style.display = 'block';
+        diary.style.display = 'block';
+        indicator.style.display = 'block';
+        teeth.addEventListener('pointerdown', increaseIndicator, false);
+        teeth.addEventListener('pointerup', throwTeeth, false);
+        teeth.addEventListener('pointercancel', throwTeeth, false);
+        teeth.addEventListener('pointerleave', throwTeeth, false);
+    }
+
     function finishDraw(e) {
         e.preventDefault();
         ctx.closePath();
         if (path === '12345') {
             showDialog(dialogs, 1);
-            popup.removeEventListener('pointerdown', startDraw);
-            dementor.style.display = 'none';
-            canvas.style.display = 'none';
-            stars.forEach(function (star) {
-               star.style.display = 'none';
-            });
-            clear();
-            teeth.style.display = 'block';
-            diary.style.display = 'block';
-            indicator.style.display = 'block';
-            teeth.addEventListener('pointerdown', increaseIndicator, false);
-            teeth.addEventListener('pointerup', throwTeeth, false);
+            hidePatronus();
+            showDiary();
         } else {
             path = '';
         }
@@ -336,15 +352,18 @@ function Box(number, onUnlock) {
         });
         document.removeEventListener('pointermove', processDraw, false);
         document.removeEventListener('pointerup', finishDraw, false);
+        document.removeEventListener('pointercancel', finishDraw, false);
     }
 
     function increaseIndicator(e) {
         var height = 0;
-        var interval = setInterval(function () {
+        teeth.classList.add('teeth--active');
+        interval = setInterval(function () {
             if (height > 150) {
                 indicator.classList.add('indicator--ready');
                 clearInterval(interval);
-                showDialog(dialogs, 2);
+                interval = undefined;
+                showDialog(dialogs, 3);
                 return;
             }
             height++;
@@ -352,13 +371,18 @@ function Box(number, onUnlock) {
         }, 20);
     }
 
-    function throwTeeth() {
-        if (indicator.offsetHeight > 100) {
-            showDialog(dialogs, 3);
+    function throwTeeth(e) {
+        teeth.classList.remove('teeth--active');
+        clearInterval(interval);
+        interval = undefined;
+        if (indicator.offsetHeight > 150) {
+            e.target.removeEventListener('pointerdown', increaseIndicator);
+            showDialog(dialogs, 4);
             setTimeout(function () {
                 _this.unlock();
             }, 2000);
         } else {
+            showDialog(dialogs, 2);
             indicator.style.height = 0;
         }
     }
