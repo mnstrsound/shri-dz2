@@ -358,6 +358,8 @@ function Box(number, onUnlock) {
             setTimeout(function () {
                 _this.unlock();
             }, 2000);
+        } else {
+            indicator.style.height = 0;
         }
     }
 
