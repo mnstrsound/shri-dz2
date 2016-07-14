@@ -7,28 +7,89 @@
  */
 function Door0(number, onUnlock) {
     DoorBase.apply(this, arguments);
+    var _this = this;
+    var dialogs = _this.popup.querySelector('.dialogs');
 
-    var buttons = [
-        this.popup.querySelector('.door-riddle__button_0'),
-        this.popup.querySelector('.door-riddle__button_1'),
-        this.popup.querySelector('.door-riddle__button_2')
+    var gears = [
+        this.popup.querySelector('.gear--1'),
+        this.popup.querySelector('.gear--2'),
+        this.popup.querySelector('.gear--3'),
+        this.popup.querySelector('.gear--4')
     ];
 
-    buttons.forEach(function (b) {
-        b.addEventListener('pointerdown', _onButtonPointerDown.bind(this));
-        b.addEventListener('pointerup', _onButtonPointerUp.bind(this));
-        b.addEventListener('pointercancel', _onButtonPointerUp.bind(this));
-        b.addEventListener('pointerleave', _onButtonPointerUp.bind(this));
-    }.bind(this));
+    var counter;
 
-    function _onButtonPointerDown(e) {
-        e.target.classList.add('door-riddle__button_pressed');
-        checkCondition.apply(this);
+    function reset() {
+        gears.forEach(function (gear) {
+            gear.classList.remove('gear--ready');
+            gear.removeAttribute('style');
+            showDialog(dialogs, 1);
+        });
     }
 
-    function _onButtonPointerUp(e) {
-        e.target.classList.remove('door-riddle__button_pressed');
-    }
+    gears.forEach(function (gear) {
+        gear.addEventListener('pointerdown', function (e) {
+            var startX, startY, posX, posY;
+            var elem = e.target;
+
+            startX = e.clientX;
+            startY = e.clientY;
+            posX = elem.offsetLeft;
+            posY = elem.offsetTop;
+            elem.setPointerCapture(e.pointerId);
+
+            elem.classList.add('gear--selected');
+            gear.addEventListener('pointermove', processMove, false);
+            gear.addEventListener('pointerup', finishMove, false);
+            gear.addEventListener('pointercancel', finishMove, false);
+
+            function processMove(e) {
+                var position = [startX - e.clientX, startY - e.clientY];
+                elem.style.left = posX - position[0] + 'px';
+                elem.style.top = posY - position[1] + 'px';
+            }
+
+            function finishMove(e) {
+                elem.classList.remove('gear--selected');
+                var elements = document.elementsFromPoint(e.clientX, e.clientY);
+                var qSel = e.target.getAttribute('data-slot');
+                var slot = document.querySelector(qSel);
+
+                if (elements.indexOf(slot)) {
+                    e.target.classList.add('gear--ready');
+                }
+                if (!counter) {
+                    counter = setTimeout(function () {
+                        var isOpened = true;
+                        gears.forEach(function (gear) {
+                            if (!gear.classList.contains('gear--ready')) {
+                                reset();
+                                isOpened = false;
+                                clearTimeout(counter);
+                                counter = undefined;
+                            }
+                        });
+
+                        if (isOpened) {
+                            showDialog(dialogs, 2);
+                            clearTimeout(counter);
+                            counter = undefined;
+                            setTimeout(function () {
+                                _this.unlock();
+                            }, 2000);
+                        }
+                    }, 300);
+                }
+                elem.removeEventListener('pointermove', processMove);
+            }
+
+        }, false);
+
+
+
+
+    });
+
 
     /**
      * Проверяем, можно ли теперь открыть дверь
@@ -181,6 +242,7 @@ function Door2(number, onUnlock) {
             var startX, startY, posX, posY;
             var elem = e.target;
 
+            elem.setPointerCapture(e.pointerId);
             startX = e.clientX;
             startY = e.clientY;
             posX = elem.offsetLeft;
@@ -192,7 +254,6 @@ function Door2(number, onUnlock) {
 
             function processMovePart(e) {
                 var position = [startX - e.clientX, startY - e.clientY];
-                elem.setPointerCapture(e.pointerId);
                 elem.style.left = posX - position[0] + 'px';
                 elem.style.top = posY - position[1] + 'px';
             }
