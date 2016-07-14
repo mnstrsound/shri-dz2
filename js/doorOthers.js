@@ -51,11 +51,16 @@ function Door0(number, onUnlock) {
 
             function finishMove(e) {
                 elem.classList.remove('gear--selected');
-                var elements = document.elementsFromPoint(e.clientX, e.clientY);
                 var qSel = e.target.getAttribute('data-slot');
                 var slot = document.querySelector(qSel);
-
-                if (elements.indexOf(slot)) {
+                var rect = slot.getBoundingClientRect();
+                var coords =  {
+                    minX: rect.left,
+                    maxX: rect.left + slot.offsetWidth,
+                    minY: rect.top,
+                    maxY: rect.top + slot.offsetHeight
+                };
+                if (e.clientX > coords.minX && e.clientX < coords.maxX && e.clientY > coords.minY && e.clientY < coords.maxY) {
                     e.target.classList.add('gear--ready');
                 }
                 if (!counter) {
@@ -84,29 +89,7 @@ function Door0(number, onUnlock) {
             }
 
         }, false);
-
-
-
-
     });
-
-
-    /**
-     * Проверяем, можно ли теперь открыть дверь
-     */
-    function checkCondition() {
-        var isOpened = true;
-        buttons.forEach(function (b) {
-            if (!b.classList.contains('door-riddle__button_pressed')) {
-                isOpened = false;
-            }
-        });
-
-        // Если все три кнопки зажаты одновременно, то откроем эту дверь
-        if (isOpened) {
-            this.unlock();
-        }
-    }
 }
 
 // Наследуемся от класса DoorBase
@@ -124,7 +107,6 @@ function Door1(number, onUnlock) {
     DoorBase.apply(this, arguments);
 
     // ==== Напишите свой код для открытия второй двери здесь ====
-    // Для примера дверь откроется просто по клику на неё
     var _this = this;
     var clickableBoltPosition = -150;
     var draggableBoltPosition = -150;
@@ -235,6 +217,13 @@ function Door2(number, onUnlock) {
         document.querySelector('.part--6')
     ];
     var kettle = document.querySelector('.kettle__inner');
+    var rect = kettle.getBoundingClientRect();
+    var coords =  {
+        minX: rect.left,
+        maxX: rect.left + kettle.offsetWidth,
+        minY: rect.top,
+        maxY: rect.top + kettle.offsetHeight
+    };
 
     parts.forEach(function (part) {
         part.addEventListener('pointerdown', function (e) {
@@ -259,12 +248,12 @@ function Door2(number, onUnlock) {
             }
 
             function finishMovePart(e) {
-                var elements = document.elementsFromPoint(e.clientX, e.clientY);
                 elem.classList.remove('part--pressed');
                 elem.removeEventListener('pointermove', processMovePart);
                 elem.removeEventListener('pointerup', finishMovePart);
                 elem.removeEventListener('pointercancel', finishMovePart);
-                if (elements.indexOf(kettle) !== -1) {
+
+                if (e.clientX > coords.minX && e.clientX < coords.maxX && e.clientY > coords.minY && e.clientY < coords.maxY) {
                     elem.classList.add('part--ready');
                     kettle.style.backgroundColor = 'rgba(' +
                         (Math.floor(Math.random() * 256)) +

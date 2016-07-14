@@ -203,12 +203,12 @@ body {
 .gear {
     box-sizing: border-box;
     position: absolute;
-    width: 65px;
-    height: 65px;
+    width: 60px;
+    height: 60px;
     background-color: #583319;
     border: 1px solid #F3E9E0;
     border-radius: 50%;
-    background-size: 57px 57px !important;
+    background-size: 55px 55px !important;
 }
 
 .gear--selected {
@@ -250,8 +250,8 @@ body {
     display: inline-block;
     vertical-align: middle;
     margin: 0 3px;
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
     background-color: #583319;
     border-radius: 50%;
 }
