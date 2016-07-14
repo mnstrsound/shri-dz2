@@ -53,16 +53,21 @@ function Door0(number, onUnlock) {
                 elem.classList.remove('gear--selected');
                 var qSel = e.target.getAttribute('data-slot');
                 var slot = document.querySelector(qSel);
-                var rect = slot.getBoundingClientRect();
-                var coords =  {
-                    minX: rect.left,
-                    maxX: rect.left + slot.offsetWidth,
-                    minY: rect.top,
-                    maxY: rect.top + slot.offsetHeight
-                };
+                var coords;
+                setCoords();
+                function setCoords () {
+                    var rect = slot.getBoundingClientRect();
+                    coords =  {
+                        minX: rect.left,
+                        maxX: rect.left + slot.offsetWidth,
+                        minY: rect.top,
+                        maxY: rect.top + slot.offsetHeight
+                    };
+                }
                 if (e.clientX > coords.minX && e.clientX < coords.maxX && e.clientY > coords.minY && e.clientY < coords.maxY) {
                     e.target.classList.add('gear--ready');
                 }
+                window.addEventListener('resize', setCoords, false);
                 if (!counter) {
                     counter = setTimeout(function () {
                         var isOpened = true;
@@ -121,6 +126,9 @@ function Door1(number, onUnlock) {
     clickableButton.addEventListener('pointerdown', moveBoltForward);
     clickableButton.addEventListener('pointerup', removePressed);
     draggableButton.addEventListener('pointerdown', startDragBolt);
+    draggableButton.addEventListener('pointermove', processDragBolt, false);
+    draggableButton.addEventListener('pointerup', finishDragBolt, false);
+    draggableButton.addEventListener('pointercancel', finishDragBolt, false);
 
     function moveBoltForward(e) {
         e.preventDefault();
@@ -158,9 +166,6 @@ function Door1(number, onUnlock) {
         e.target.classList.add('bolt__button--pressed');
         startX = e.clientX;
         e.target.setPointerCapture(e.pointerId);
-        e.target.addEventListener('pointermove', processDragBolt, false);
-        e.target.addEventListener('pointerup', finishDragBolt, false);
-        e.target.addEventListener('pointercancel', finishDragBolt, false);
     }
 
     function processDragBolt(e) {
@@ -177,9 +182,6 @@ function Door1(number, onUnlock) {
         if (draggableBoltPosition < -150) draggableBoltPosition = -150;
         draggableBolt.style.right = draggableBoltPosition + 'px';
         checkCondition();
-        e.target.removeEventListener('pointermove', processDragBolt);
-        e.target.removeEventListener('pointerup', finishDragBolt);
-        e.target.removeEventListener('pointercancel', finishDragBolt);
     }
 
     function checkCondition() {
@@ -217,14 +219,18 @@ function Door2(number, onUnlock) {
         document.querySelector('.part--6')
     ];
     var kettle = document.querySelector('.kettle__inner');
-    var rect = kettle.getBoundingClientRect();
-    var coords =  {
-        minX: rect.left,
-        maxX: rect.left + kettle.offsetWidth,
-        minY: rect.top,
-        maxY: rect.top + kettle.offsetHeight
-    };
-
+    var coords;
+    setCoords();
+    function setCoords () {
+        var rect = kettle.getBoundingClientRect();
+        coords =  {
+            minX: rect.left,
+            maxX: rect.left + kettle.offsetWidth,
+            minY: rect.top,
+            maxY: rect.top + kettle.offsetHeight
+        };
+    }
+    window.addEventListener('resize', setCoords, false);
     parts.forEach(function (part) {
         part.addEventListener('pointerdown', function (e) {
             e.preventDefault();
